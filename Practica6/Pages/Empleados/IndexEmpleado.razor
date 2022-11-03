@@ -1,0 +1,96 @@
+﻿@page "/indexEmpleado"
+
+
+@using Practica6.Models
+
+@using Practica6.Data.Services
+
+@inject IEmpleadosService EmpleadosService
+
+<!-- llama funciones JS desde Blazor -->
+@inject IJSRuntime JSRuntime
+
+<!-- Proporciona la liberacion de recursos -->
+@implements IDisposable
+
+<h3>Lista de empleados</h3>
+
+<div>
+    <a href="/crearEmpleado"><i>Crear</i></a>
+</div>
+
+<div class="row">
+    @if (ListaEmpleados.Count > 0)
+    {
+        <table id="mi_tabla" class="table-hover" style="width:100%;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Folio</th>
+                    <th>Ingreso</th>
+                    <th>Departamento</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                    <th>Funcion</th>
+                    <th>Baja</th>
+                    <th>Sueldo</th>
+                    <th></th>
+                </tr>
+            </thead>
+                <tbody>
+                    @foreach (var item in ListaEmpleados)
+                    {
+                        <tr>
+                            <td>@item.IntId</td>
+                            <td>@item.IntFolio</td>
+                            <td>@item.DatIngreso</td>
+                            <td>@item.StrDepartamento</td>
+                            <td>@item.StrNombre</td>
+                            <td>@item.StrApellido</td>
+                            <td>@item.StrEmail</td>
+                            <td>@item.StrFuncion</td>
+                            <td>@item.DatBaja</td>
+                            <td>@item.IntSueldo</td>
+                            <td></td>
+                        <td>
+                            <a class="btn btn-primary mr-2" href="#">Editar</a>
+                            <button class="btn btn-danger mr-2" @onclick="() => BorrarEmpleado(item)">Borrar</button>
+                        </td>
+                        </tr>
+                    }
+                </tbody>
+        </table>
+    }
+
+</div>
+
+@code {
+    //Se recibe el listado de empleados y le pondremos el nombre ListaEmpleados
+    private List<Empleado> ListaEmpleados = new List<Empleado>();
+
+    //Para obtener los datos del repositorio services utilizamos el metodo
+    //AbandonedMutexException que se ejecuta en cuanto se entra al componente
+    //lo volvemos async
+    protected override async Task OnInitializedAsync()
+    {
+        ListaEmpleados = await EmpleadosService.ObtenerTodos();
+    }
+
+    private async Task BorrarEmpleado(Empleado empleado)
+    {
+        await EmpleadosService.Eliminar(empleado);
+    }
+    //Metodos para el datatable.net
+    //Cuando los componentes terminan de renderizar se ejecuta OnAfterRenderAsyn
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.InvokeAsync<object>("DataTablesAdd", "#mi_tabla");
+    }
+
+    //Libera todos los recursos que ha adquirido pero que aun no libera
+    void IDisposable.Dispose()
+    {
+        JSRuntime.InvokeAsync<object>("DataTablesRemove", "#mi_tabla");
+    }
+}

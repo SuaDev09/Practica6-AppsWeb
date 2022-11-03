@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link href="css/site.css" rel="stylesheet" />
     <link href="Practica6.styles.css" rel="stylesheet" />
+
+    @*Librerias de daaTables.net*@
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link href="https://cdn.datatables/net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
 <body>
@@ -28,5 +33,35 @@
     </div>
 
     <script src="_framework/blazor.server.js"></script>
+
+    <!-- Script para el datatable.net-->
+    <script>
+        function DataTablesAdd(table){
+            $(document).ready(function (){
+                //Se asigna "mi_tabla" que sera llamado en el id de la tabla
+                $('#mi_tabla').DataTable({
+                //Se puede visualizar u ocultar las opciones de la tabla
+                    "paging": true, 
+                    "searching": true,
+                    "ordering": true,
+                    "info": false,
+                    "bDestroy": true,
+                    //Cambia todos los titulos a un idioma en especifico
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish,json"
+                    },
+                });
+            });
+        }
+
+        function DataTablesRemove(table){
+            $(document).ready(function () {
+                $(table).DataTable().destroy();
+                //Removes the datatable wrapper from the dom.
+                var elem = document.querySelector(table + '_wrapper');
+                elem.parentNode.removeChild(elem);
+            })
+        }
+    </script>
 </body>
 </html>

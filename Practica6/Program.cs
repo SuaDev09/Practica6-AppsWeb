@@ -1,13 +1,17 @@
+using Practica6.Data.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Practica6.Data;
+using Microsoft.EntityFrameworkCore;
+using Practica6.Models;
+//using Practica6.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SQL")));
+builder.Services.AddScoped<IEmpleadosService, EmpleadosService>();
 
 var app = builder.Build();
 

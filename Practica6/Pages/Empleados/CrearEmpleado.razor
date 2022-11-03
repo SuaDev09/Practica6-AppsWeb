@@ -1,0 +1,72 @@
+﻿@page "/crearEmpleado"
+
+@using Practica6.Models
+
+@using Practica6.Data.Services
+
+@inject IEmpleadosService EmpleadosService
+@inject NavigationManager NavigationManager
+
+<h1>Crear empleado</h1>
+
+
+<EditForm Model="@empleado">
+    <table class="table">
+        <tr>
+            <td>Departamento:</td>
+            <td>
+                <input class="form-control col-sm-4" type="text" @bind="empleado.StrDepartamento" />
+            </td>
+        </tr>
+        <tr>
+            <td>Nombre:</td>
+            <td>
+                <input class="form-control col-sm-4" type="text" @bind="empleado.StrNombre" />
+            </td>
+        </tr>
+        <tr>
+            <td>Apellido:</td>
+            <td>
+                <input class="form-control col-sm-4" type="text" @bind="empleado.StrApellido" />
+            </td>
+        </tr>
+        <tr>
+            <td>Email:</td>
+            <td>
+                <input class="form-control col-sm-4" type="text" @bind="empleado.StrEmail" />
+            </td>
+        </tr>
+         <tr>
+            <td>Funcion:</td>
+            <td>
+                <input class="form-control col-sm-4" type="text" @bind="empleado.StrFuncion" />
+            </td>
+        </tr>
+
+        <tr>
+            
+            <td colspan="2" style="text-align:center">
+                <input class="form-control col-sm-2" type="submit" value="Save" @onclick="Crear" />
+                <input class="form-control col-sm-2" type="button" value="Cancel" @onclick="Cancel" />
+            </td>
+        </tr>
+
+    </table>
+</EditForm>
+
+@code {
+
+    private Empleado empleado = new Empleado();
+
+    protected async Task Crear()
+    {
+        empleado.IntId = 0;
+        await EmpleadosService.Crear(empleado);
+        NavigationManager.NavigateTo("/");
+    }
+
+    protected void Cancel()
+    {
+        NavigationManager.NavigateTo("/indexEmpleados");
+    }
+}
