@@ -12,50 +12,34 @@ namespace Practica6.Data.Services
             _context = context;
         }
 
-        public async Task<bool> Actualizar(Empleado empleadoActualizar)
+        public async Task Actualizar(Empleado empleadoActualizar)
         {
-            _context.Entry(empleadoActualizar).State = EntityState.Modified;
-
-            return await _context.SaveChangesAsync() > 0;
+            _context.Empleados.Update(empleadoActualizar);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> Crear(Empleado empleadocrear)
+        public async Task<Empleado> Crear(Empleado empleadocrear)
         {
 
             _context.Empleados.Add(empleadocrear);
-            return await _context.SaveChangesAsync() > 0;
+            await _context.SaveChangesAsync();
+            return empleadocrear;
         }
 
-        public async Task<bool> Eliminar(Empleado empleado)
+        public async Task Eliminar(Empleado empleado)
         {
             _context.Empleados.Remove(empleado);
-            return await _context.SaveChangesAsync() > 0;
+            await _context.SaveChangesAsync();
         }
 
         public async Task<Empleado> ObtenerId(int id)
         {
-            return await _context.Empleados.FindAsync(id);
+            return await _context.Empleados.Include(x => x.IntId).FirstOrDefaultAsync(x => x.IntId == id);
         }
 
         public async Task<List<Empleado>> ObtenerTodos()
         {
             return await _context.Empleados.ToListAsync();
         }
-
-        public async Task<bool> SalvarEmpleado(Empleado empleado)
-        {
-
-            if (empleado.IntId > 0)
-            {
-                return await Actualizar(empleado);
-            }
-            else
-            {
-                return await Crear(empleado);
-            }
-
-
-        }
-
-    }
+    } 
 }

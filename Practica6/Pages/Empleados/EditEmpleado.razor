@@ -1,0 +1,104 @@
+﻿@page "/empleados/edit/{id:int}"
+
+@using Practica6.Models
+@using Practica6.Data.Services
+
+@inject IEmpleadosService EmpleadosService
+@inject NavigationManager NavigationManager
+
+@if (empleado != null)
+{
+    <div class="d-flex col justify-content-between">
+        <h1>@empleado.StrNombre</h1>
+        <a href="/empleados/indexEmpleado" class="btn w-25"><i>Regresar</i></a>
+    </div>
+
+    <EditForm Model="@empleado" OnValidSubmit="@Actualizar">
+        <table class="table">
+            <tr>
+                <td>Folio: </td>
+                <td>
+                    <input class="form-control col-sm-4" type="number" @bind-value="empleado.IntFolio" />
+                </td>
+            </tr>
+            <tr>
+                <td>Nombre:</td>
+                <td>
+                    <input class="form-control col-sm-4" type="text" @bind-value="empleado.StrNombre" />
+                </td>
+            </tr>
+            <tr>
+                <td>Apellido:</td>
+                <td>
+                    <input class="form-control col-sm-4" type="text" @bind-value="empleado.StrApellido" />
+                </td>
+            </tr>
+            <tr>
+                <td>Email:</td>
+                <td>
+                    <input class="form-control col-sm-4" type="text" @bind-value="empleado.StrEmail" />
+                </td>
+            </tr>
+            <tr>
+                <td>Funcion:</td>
+                <td>
+                    <input class="form-control col-sm-4" type="text" @bind-value="empleado.StrFuncion" />
+                </td>
+            </tr>
+
+            <tr>
+                <td>Departamento:</td>
+                <td>
+                    <input class="form-control col-sm-4" type="text" @bind-value="empleado.StrDepartamento" />
+                </td>
+            </tr>
+
+            <tr>
+                <td>Sueldo:</td>
+                <td>
+                    <input class="form-control col-sm-4" type="number" @bind-value="empleado.IntSueldo" />
+                </td>
+            </tr>
+
+            <tr>
+                <td>Fecha ingreso:</td>
+                <td>
+                    <input class="form-control col-sm-4" type="date" @bind-value="empleado.DatIngreso" />
+                </td>
+            </tr>
+            <tr>
+                <td>Fecha de baja:</td>
+                <td>
+                    <input class="form-control col-sm-4" type="date" @bind-value="empleado.DatBaja" />
+                </td>
+            </tr>
+        </table>
+        <div class="d-flex col justify-content-between">
+            <input class="btn btn-danger w-25" type="button" value="Cancel" @onclick="Cancel" />
+            <input class="btn btn-primary w-25" type="submit" value="Actualizar" @onclick="Actualizar" />
+        </div>
+    </EditForm>
+}
+@code {
+    public int id { get; set; }
+    public Empleado? empleado { get; set; }
+    public List<Empleado>? empleados { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        empleado = await EmpleadosService.ObtenerId(id);
+        empleados = await EmpleadosService.ObtenerTodos();
+    }
+
+    private async void Actualizar()
+    {
+        await EmpleadosService.Actualizar(empleado);
+        NavigationManager.NavigateTo("/empleados/indexEmpleados");
+    }
+
+    protected void Cancel()
+    {
+        NavigationManager.NavigateTo("/empleados/indexEmpleado");
+    }
+}

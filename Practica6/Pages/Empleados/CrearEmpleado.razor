@@ -1,4 +1,4 @@
-﻿@page "/crearEmpleado"
+﻿@page "/empleados/crearEmpleado"
 
 @using Practica6.Models
 
@@ -7,15 +7,17 @@
 @inject IEmpleadosService EmpleadosService
 @inject NavigationManager NavigationManager
 
-<h1>Crear empleado</h1>
-
+<div class="d-flex col justify-content-between">
+    <h1>Crear empleado</h1>
+    <a href="/empleados/indexEmpleado" class="btn w-25"><i>Regresar</i></a>
+</div>
 
 <EditForm Model="@empleado">
     <table class="table">
         <tr>
-            <td>Departamento:</td>
+            <td>Folio: </td>
             <td>
-                <input class="form-control col-sm-4" type="text" @bind="empleado.StrDepartamento" />
+                <input class="form-control col-sm-4" type="number" @bind="empleado.IntFolio" />
             </td>
         </tr>
         <tr>
@@ -44,29 +46,60 @@
         </tr>
 
         <tr>
-            
-            <td colspan="2" style="text-align:center">
-                <input class="form-control col-sm-2" type="submit" value="Save" @onclick="Crear" />
-                <input class="form-control col-sm-2" type="button" value="Cancel" @onclick="Cancel" />
+            <td>Departamento:</td>
+            <td>
+                <input class="form-control col-sm-4" type="text" @bind="empleado.StrDepartamento" />
             </td>
         </tr>
 
+        <tr>
+            <td>Sueldo:</td>
+            <td>
+                <input class="form-control col-sm-4" type="number" @bind="empleado.IntSueldo" />
+            </td>
+        </tr>
+
+        <tr>
+            <td>Fecha ingreso:</td>
+            <td>
+                <input class="form-control col-sm-4" type="date" @bind="empleado.DatIngreso" />
+            </td>
+        </tr>
+        <tr>
+            <td>Fecha de baja:</td>
+            <td>
+                <input class="form-control col-sm-4" type="date" @bind="empleado.DatBaja" />
+            </td>
+        </tr>
     </table>
+    <div class="d-flex col justify-content-between">
+        <input class="btn btn-danger w-25" type="button" value="Cancel" @onclick="Cancel" />
+        <input class="btn btn-primary w-25" type="submit" value="Save" @onclick="Crear" /> 
+    </div>
+    
+
 </EditForm>
 
 @code {
+    public Empleado? empleado { get; set; }
+    public List<Empleado>? empleados { get; set; }
 
-    private Empleado empleado = new Empleado();
+    protected override async Task OnInitializedAsync()
+    {
+        empleado = new Empleado();
+        empleados = await EmpleadosService.ObtenerTodos();
+    }
 
     protected async Task Crear()
     {
         empleado.IntId = 0;
+        empleado.StrStatus = empleado.DatBaja != null ? true : false;  
         await EmpleadosService.Crear(empleado);
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("/empleados/indexEmpleado");
     }
 
     protected void Cancel()
     {
-        NavigationManager.NavigateTo("/indexEmpleados");
+        NavigationManager.NavigateTo("/empleados/indexEmpleado");
     }
 }

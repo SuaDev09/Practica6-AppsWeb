@@ -6,9 +6,9 @@ namespace Practica6.Data.Services
     {
         public Task<List<Empleado>> ObtenerTodos();
         public Task<Empleado> ObtenerId(int id);
-        public Task<bool> Crear(Empleado empleadocrear);
-        public Task<bool> Actualizar(Empleado empleadoActualizar);
-        public Task<bool> Eliminar(Empleado empleado);
-        public Task<bool> SalvarEmpleado(Empleado empleado);
+        public Task<Empleado> Crear(Empleado empleadocrear);
+        public Task Actualizar(Empleado empleadoActualizar);
+        public Task Eliminar(Empleado empleado);
+        //public Task<bool> SalvarEmpleado(Empleado empleado);
     }
 }

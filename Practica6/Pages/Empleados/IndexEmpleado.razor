@@ -1,4 +1,4 @@
-﻿@page "/indexEmpleado"
+﻿@page "/empleados/indexEmpleado"
 
 
 @using Practica6.Models
@@ -7,59 +7,52 @@
 
 @inject IEmpleadosService EmpleadosService
 
-<!-- llama funciones JS desde Blazor -->
-@inject IJSRuntime JSRuntime
 
-<!-- Proporciona la liberacion de recursos -->
-@implements IDisposable
-
-<h3>Lista de empleados</h3>
-
-<div>
-    <a href="/crearEmpleado"><i>Crear</i></a>
+<div class="d-flex col justify-content-between">
+    <h1>Lista de empleados</h1>
+    <a href="/empleados/crearEmpleado" class="btn btn-primary"><i>Crear</i></a>
 </div>
 
 <div class="row">
     @if (ListaEmpleados.Count > 0)
     {
-        <table id="mi_tabla" class="table-hover" style="width:100%;">
-            <thead>
+        <table id="mi_tabla" class="table">
+            <thead class="thead-dark">
                 <tr>
-                    <th>ID</th>
-                    <th>Folio</th>
-                    <th>Ingreso</th>
-                    <th>Departamento</th>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Email</th>
-                    <th>Funcion</th>
-                    <th>Baja</th>
-                    <th>Sueldo</th>
-                    <th></th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Folio</th>
+                    <th scope="col">Ingreso</th>
+                    <th scope="col">Departamento</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apellido</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Funcion</th>
+                    <th scope="col">Baja</th>
+                    <th scope="col">Sueldo</th>
                 </tr>
             </thead>
-                <tbody>
-                    @foreach (var item in ListaEmpleados)
-                    {
-                        <tr>
-                            <td>@item.IntId</td>
-                            <td>@item.IntFolio</td>
-                            <td>@item.DatIngreso</td>
-                            <td>@item.StrDepartamento</td>
-                            <td>@item.StrNombre</td>
-                            <td>@item.StrApellido</td>
-                            <td>@item.StrEmail</td>
-                            <td>@item.StrFuncion</td>
-                            <td>@item.DatBaja</td>
-                            <td>@item.IntSueldo</td>
-                            <td></td>
+            <tbody>
+                @foreach (var item in ListaEmpleados)
+                {
+                    <tr>
+                        <td scope="row">@item.IntId</td>
+                        <td>@item.IntFolio</td>
+                        <td>@item.DatIngreso</td>
+                        <td>@item.StrDepartamento</td>
+                        <td>@item.StrNombre</td>
+                        <td>@item.StrApellido</td>
+                        <td>@item.StrEmail</td>
+                        <td>@item.StrFuncion</td>
+                        <td>@item.DatBaja</td>
+                        <td>@item.IntSueldo</td>
+                        <td></td>
                         <td>
-                            <a class="btn btn-primary mr-2" href="#">Editar</a>
-                            <button class="btn btn-danger mr-2" @onclick="() => BorrarEmpleado(item)">Borrar</button>
+                            <a class="btn btn-primary mr-2" href="/empleados/edit/@item.IntId" role="button">Editar</a>
+                            <button class="btn btn-danger mr-2" @onclick="@(e => BorrarEmpleado(item.IntId))">Borrar</button>
                         </td>
-                        </tr>
-                    }
-                </tbody>
+                    </tr>
+                }
+            </tbody>
         </table>
     }
 
@@ -68,6 +61,7 @@
 @code {
     //Se recibe el listado de empleados y le pondremos el nombre ListaEmpleados
     private List<Empleado> ListaEmpleados = new List<Empleado>();
+    private Empleado empleado { get; set; }
 
     //Para obtener los datos del repositorio services utilizamos el metodo
     //AbandonedMutexException que se ejecuta en cuanto se entra al componente
@@ -77,20 +71,12 @@
         ListaEmpleados = await EmpleadosService.ObtenerTodos();
     }
 
-    private async Task BorrarEmpleado(Empleado empleado)
+    private async Task BorrarEmpleado(int id)
     {
-        await EmpleadosService.Eliminar(empleado);
-    }
-    //Metodos para el datatable.net
-    //Cuando los componentes terminan de renderizar se ejecuta OnAfterRenderAsyn
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await JSRuntime.InvokeAsync<object>("DataTablesAdd", "#mi_tabla");
-    }
-
-    //Libera todos los recursos que ha adquirido pero que aun no libera
-    void IDisposable.Dispose()
-    {
-        JSRuntime.InvokeAsync<object>("DataTablesRemove", "#mi_tabla");
+        var empleadoAux = await EmpleadosService.ObtenerId(id);
+        if (empleadoAux != null)
+        {
+            await EmpleadosService.Eliminar(empleadoAux);
+        }
     }
 }
